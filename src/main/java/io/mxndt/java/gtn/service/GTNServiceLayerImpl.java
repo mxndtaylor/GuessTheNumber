@@ -16,10 +16,10 @@ import java.util.List;
 public class GTNServiceLayerImpl implements GTNServiceLayer {
 
     @Autowired
-    private GameDao gameDao;
+    private final GameDao gameDao;
 
     @Autowired
-    private RoundDao roundDao;
+    private final RoundDao roundDao;
 
     @Autowired
     public GTNServiceLayerImpl(GameDao gameDao, RoundDao roundDao) {
@@ -43,7 +43,7 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
     }
 
     @Override
-    public Round guess(Round round) {
+    public Round guess(Round round) throws GTNGameNotFoundException {
         return null;
     }
 

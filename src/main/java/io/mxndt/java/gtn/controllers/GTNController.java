@@ -2,6 +2,7 @@ package io.mxndt.java.gtn.controllers;
 
 import io.mxndt.java.gtn.models.Game;
 import io.mxndt.java.gtn.models.Round;
+import io.mxndt.java.gtn.service.GTNGameNotFoundException;
 import io.mxndt.java.gtn.service.GTNServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.List;
 public class GTNController {
 
     @Autowired
-    private GTNServiceLayer service;
+    private final GTNServiceLayer service;
 
     public GTNController(GTNServiceLayer service) {
         this.service = service;
@@ -32,7 +33,7 @@ public class GTNController {
     @PostMapping("/begin")
     @ResponseStatus(HttpStatus.CREATED)
     public int begin() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return service.createGame().getId();
     }
 
     /**
@@ -45,7 +46,12 @@ public class GTNController {
      */
     @PostMapping("/guess")
     public ResponseEntity<Round> guess(@RequestBody Round round) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            round = service.guess(round);
+        } catch (GTNGameNotFoundException e) {
+            return new ResponseEntity("No game found by that ID", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(round);
     }
 
     /**
@@ -55,7 +61,7 @@ public class GTNController {
      */
     @GetMapping("game")
     public List<Game> getAllGames() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return service.getGames();
     }
 
     /**
@@ -67,7 +73,13 @@ public class GTNController {
      */
     @GetMapping("game/{gameId}")
     public ResponseEntity<Game> getGame(@PathVariable int gameId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Game game;
+        try {
+            game = service.getGame(gameId);
+        } catch (GTNGameNotFoundException e) {
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(game);
     }
 
     /**
@@ -79,7 +91,13 @@ public class GTNController {
      */
     @GetMapping("rounds/{gameId}")
     public ResponseEntity<List<Round>> getGameRounds(@PathVariable int gameId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Round> result;
+        try {
+            result = service.getGameRounds(gameId);
+        } catch (GTNGameNotFoundException e) {
+            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(result);
     }
 
 }

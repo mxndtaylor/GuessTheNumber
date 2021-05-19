@@ -41,7 +41,7 @@ public interface GTNServiceLayer {
      * @param round - Round: contains a game id and guess, but not a time or a result
      * @return - Round: the input round, but with the time and result fields filled
      */
-    Round guess(Round round);
+    Round guess(Round round) throws GTNGameNotFoundException;
 
     /**
      * Fetches all rounds for a game based on its id
