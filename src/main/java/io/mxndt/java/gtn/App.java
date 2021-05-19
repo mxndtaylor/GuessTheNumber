@@ -1,4 +1,4 @@
-package io.mxndt.java.guessthenumber;
+package io.mxndt.java.gtn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

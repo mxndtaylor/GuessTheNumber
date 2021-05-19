@@ -1,8 +1,8 @@
-package io.mxndt.java.guessthenumber.controllers;
+package io.mxndt.java.gtn.controllers;
 
-import io.mxndt.java.guessthenumber.data.GameDao;
-import io.mxndt.java.guessthenumber.models.Game;
-import io.mxndt.java.guessthenumber.models.Round;
+import io.mxndt.java.gtn.models.Game;
+import io.mxndt.java.gtn.models.Round;
+import io.mxndt.java.gtn.service.GTNServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +10,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author mxndt
+ */
 @RestController
 @RequestMapping("/api/guessthenumber")
-public class GuessTheNumberController {
+public class GTNController {
 
     @Autowired
-    private GameDao dao;
+    private GTNServiceLayer service;
+
+    public GTNController(GTNServiceLayer service) {
+        this.service = service;
+    }
 
     /**
      * starts a game, generates an answer and sets the correct status

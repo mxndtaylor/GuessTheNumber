@@ -1,4 +1,4 @@
-package io.mxndt.java.guessthenumber.models;
+package io.mxndt.java.gtn.models;
 
 /**
  * @author mxndt

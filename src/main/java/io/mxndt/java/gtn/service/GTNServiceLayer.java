@@ -1,7 +1,7 @@
-package io.mxndt.java.guessthenumber.service;
+package io.mxndt.java.gtn.service;
 
-import io.mxndt.java.guessthenumber.models.Game;
-import io.mxndt.java.guessthenumber.models.Round;
+import io.mxndt.java.gtn.models.Game;
+import io.mxndt.java.gtn.models.Round;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author mxndt
  */
-public interface GuessTheNumberServiceLayer {
+public interface GTNServiceLayer {
 
     /**
      * Creates a new game
@@ -23,10 +23,10 @@ public interface GuessTheNumberServiceLayer {
      *
      * @param gameId - int: id of the desired game
      * @return - Game: the desired game
-     * @throws GuessTheNumberGameNotFoundException - thrown when
+     * @throws GTNGameNotFoundException - thrown when
      *              the gameId does not match any games
      */
-    Game getGame(int gameId) throws GuessTheNumberGameNotFoundException;
+    Game getGame(int gameId) throws GTNGameNotFoundException;
 
     /**
      * fetches all games, filtering out answers for unfinished games
@@ -48,8 +48,8 @@ public interface GuessTheNumberServiceLayer {
      *
      * @param gameId - int: id of the game where the rounds were played
      * @return - List<Round>: list of all rounds in the game
-     * @throws GuessTheNumberGameNotFoundException - thrown when
+     * @throws GTNGameNotFoundException - thrown when
      *              the gameId does not match any games
      */
-    List<Round> getGameRounds(int gameId) throws GuessTheNumberGameNotFoundException;
+    List<Round> getGameRounds(int gameId) throws GTNGameNotFoundException;
 }

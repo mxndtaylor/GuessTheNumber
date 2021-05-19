@@ -1,7 +1,6 @@
-package io.mxndt.java.guessthenumber.data;
+package io.mxndt.java.gtn.data;
 
-import io.mxndt.java.guessthenumber.models.Game;
-import io.mxndt.java.guessthenumber.models.Round;
+import io.mxndt.java.gtn.models.Game;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package io.mxndt.java.guessthenumber.models;
+package io.mxndt.java.gtn.models;
 
 import java.sql.Time;
 
