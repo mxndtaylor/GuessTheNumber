@@ -39,4 +39,6 @@ public interface GameDao {
      *             Note that gameId cannot be updated as that simply selects a different game to update
      */
     void updateStatus(Game game) throws GTNPersistenceException;
+
+    void delete(Game game) throws GTNPersistenceException;
 }

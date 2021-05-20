@@ -51,7 +51,6 @@ public class RoundDatabaseDao implements RoundDao {
             throw new GTNPersistenceException("An error occurred while trying to submit this guess", t);
         }
 
-
         return round;
     }
 
@@ -64,6 +63,29 @@ public class RoundDatabaseDao implements RoundDao {
         } catch (Throwable t) {
             throw new GTNPersistenceException("An error occurred while attempting "
                     + "to find the rounds of that game.", t);
+        }
+    }
+
+    @Override
+    public void delete(Round round) throws GTNPersistenceException {
+        final String sql = "DELETE FROM round WHERE GameId = ? AND GuessTime = ?";
+
+        try {
+            GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update((Connection conn) -> {
+
+                PreparedStatement statement = conn.prepareStatement(
+                        sql,
+                        Statement.RETURN_GENERATED_KEYS);
+
+                statement.setInt(1, round.getGameId());
+                statement.setTimestamp(2, round.getGuessTime());
+                return statement;
+
+            }, keyHolder);
+        } catch (Throwable t) {
+            throw new GTNPersistenceException("An error occurred while trying to delete this round.", t);
         }
     }
 

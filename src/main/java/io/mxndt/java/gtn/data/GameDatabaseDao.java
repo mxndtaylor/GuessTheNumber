@@ -92,6 +92,47 @@ public class GameDatabaseDao implements GameDao {
         }
     }
 
+    @Override
+    public void delete(Game game) throws GTNPersistenceException {
+        // Delete all the rounds of the game
+        final String sqlDeleteRounds = "DELETE FROM round WHERE GameId = ?;";
+        try {
+            GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update((Connection conn) -> {
+
+                PreparedStatement statement = conn.prepareStatement(
+                        sqlDeleteRounds,
+                        Statement.RETURN_GENERATED_KEYS);
+
+                statement.setInt(1, game.getId());
+                return statement;
+
+            }, keyHolder);
+        } catch (Throwable t) {
+            throw new GTNPersistenceException("An error occurred while trying to delete this game's rounds.", t);
+        }
+
+        // Delete the game
+        final String sqlDeleteGame = "DELETE FROM game WHERE id = ?;";
+        try {
+            GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update((Connection conn) -> {
+
+                PreparedStatement statement = conn.prepareStatement(
+                        sqlDeleteGame,
+                        Statement.RETURN_GENERATED_KEYS);
+
+                statement.setInt(1, game.getId());
+                return statement;
+
+            }, keyHolder);
+        } catch (Throwable t) {
+            throw new GTNPersistenceException("An error occurred while trying to delete this game.", t);
+        }
+    }
+
     private static final class GameMapper implements RowMapper<Game> {
 
         @Override
