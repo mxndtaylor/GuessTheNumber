@@ -16,7 +16,7 @@ public interface GTNServiceLayer {
      *
      * @return - Game: the newly created game
      */
-    Game createGame();
+    Game createGame() throws GTNPersistenceException;
 
     /**
      * fetches a game based on its id, filtering out its answer
@@ -26,14 +26,15 @@ public interface GTNServiceLayer {
      * @throws GTNGameNotFoundException - thrown when
      *              the gameId does not match any games
      */
-    Game getGame(int gameId) throws GTNGameNotFoundException;
+    Game getGame(int gameId) throws
+            GTNGameNotFoundException, GTNPersistenceException;
 
     /**
      * fetches all games, filtering out answers for unfinished games
      *
      * @return - List<Game>: the list of all games
      */
-    List<Game> getGames();
+    List<Game> getGames() throws GTNPersistenceException;
 
     /**
      * makes a guess
@@ -41,7 +42,10 @@ public interface GTNServiceLayer {
      * @param round - Round: contains a game id and guess, but not a time or a result
      * @return - Round: the input round, but with the time and result fields filled
      */
-    Round guess(Round round) throws GTNGameNotFoundException;
+    Round guess(Round round) throws
+            GTNGameNotFoundException,
+            GTNGameFinishedException,
+            GTNGuessFormatException, GTNPersistenceException;
 
     /**
      * Fetches all rounds for a game based on its id
@@ -51,5 +55,6 @@ public interface GTNServiceLayer {
      * @throws GTNGameNotFoundException - thrown when
      *              the gameId does not match any games
      */
-    List<Round> getGameRounds(int gameId) throws GTNGameNotFoundException;
+    List<Round> getGameRounds(int gameId) throws
+            GTNGameNotFoundException, GTNGameFinishedException, GTNPersistenceException;
 }

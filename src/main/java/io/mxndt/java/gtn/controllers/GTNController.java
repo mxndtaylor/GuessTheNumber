@@ -2,8 +2,7 @@ package io.mxndt.java.gtn.controllers;
 
 import io.mxndt.java.gtn.models.Game;
 import io.mxndt.java.gtn.models.Round;
-import io.mxndt.java.gtn.service.GTNGameNotFoundException;
-import io.mxndt.java.gtn.service.GTNServiceLayer;
+import io.mxndt.java.gtn.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +30,13 @@ public class GTNController {
      * @return - int: representing id of the created game on success
      */
     @PostMapping("/begin")
-    @ResponseStatus(HttpStatus.CREATED)
-    public int begin() {
-        return service.createGame().getId();
+    public ResponseEntity<Game> begin() {
+        try {
+            Game game = service.createGame();
+            return new ResponseEntity<>(game, HttpStatus.CREATED);
+        } catch (GTNPersistenceException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -49,7 +52,13 @@ public class GTNController {
         try {
             round = service.guess(round);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity("No game found by that ID", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (GTNGuessFormatException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (GTNGameFinishedException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+        } catch (GTNPersistenceException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok(round);
     }
@@ -60,8 +69,12 @@ public class GTNController {
      * @return - List<Game>: containing all games
      */
     @GetMapping("game")
-    public List<Game> getAllGames() {
-        return service.getGames();
+    public ResponseEntity<List<Game>> getAllGames() {
+        try {
+            return new ResponseEntity<>(service.getGames(), HttpStatus.OK);
+        } catch (GTNPersistenceException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -77,7 +90,9 @@ public class GTNController {
         try {
             game = service.getGame(gameId);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (GTNPersistenceException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok(game);
     }
@@ -95,7 +110,11 @@ public class GTNController {
         try {
             result = service.getGameRounds(gameId);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (GTNPersistenceException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (GTNGameFinishedException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
         }
         return ResponseEntity.ok(result);
     }
