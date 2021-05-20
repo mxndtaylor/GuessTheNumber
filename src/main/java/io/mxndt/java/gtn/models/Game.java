@@ -5,9 +5,12 @@ package io.mxndt.java.gtn.models;
  */
 public class Game {
 
+    public static final String IN_PROGRESS = "in-progress";
+    public static final String FINISHED = "finished";
+
     private int id;
     private int answer;
-    private boolean inProgress;
+    private String status;
 
     public int getAnswer() {
         return answer;
@@ -25,11 +28,11 @@ public class Game {
         this.id = id;
     }
 
-    public boolean isInProgress() {
-        return inProgress;
+    public String getStatus() {
+        return status;
     }
 
-    public void setInProgress(boolean inProgress) {
-        this.inProgress = inProgress;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

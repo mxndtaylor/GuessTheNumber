@@ -1,6 +1,7 @@
 package io.mxndt.java.gtn.data;
 
 import io.mxndt.java.gtn.models.Round;
+import io.mxndt.java.gtn.service.GTNPersistenceException;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface RoundDao {
      * @param round - Round: the round to be added
      * @return - Round: the round as it is stored
      */
-    Round add(Round round);
+    Round add(Round round) throws GTNPersistenceException;
 
     /**
      * fetches all rounds for a certain game
@@ -23,5 +24,5 @@ public interface RoundDao {
      * @param gameId - int: id of the game whose rounds are to be fetched
      * @return - List<Round>: the list of all rounds associated with the game
      */
-    List<Round> getRounds(int gameId);
+    List<Round> getRounds(int gameId) throws GTNPersistenceException;
 }

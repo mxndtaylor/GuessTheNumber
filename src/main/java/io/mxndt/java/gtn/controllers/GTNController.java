@@ -35,7 +35,7 @@ public class GTNController {
             Game game = service.createGame();
             return new ResponseEntity<>(game, HttpStatus.CREATED);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -52,13 +52,13 @@ public class GTNController {
         try {
             round = service.guess(round);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (GTNGuessFormatException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (GTNGameFinishedException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.METHOD_NOT_ALLOWED);
+            return new ResponseEntity(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok(round);
     }
@@ -73,7 +73,7 @@ public class GTNController {
         try {
             return new ResponseEntity<>(service.getGames(), HttpStatus.OK);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -90,9 +90,9 @@ public class GTNController {
         try {
             game = service.getGame(gameId);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok(game);
     }
@@ -110,11 +110,11 @@ public class GTNController {
         try {
             result = service.getGameRounds(gameId);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (GTNGameFinishedException e) {
-            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.METHOD_NOT_ALLOWED);
+            return new ResponseEntity(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
         }
         return ResponseEntity.ok(result);
     }

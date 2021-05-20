@@ -35,9 +35,8 @@ public interface GameDao {
     /**
      * sets a game's status
      *
-     * @param gameId - int: the id of the game
-     * @param inProgress - boolean: the status to be set
-     * @return - boolean: true if item exists and is updated
+     * @param game - Game: game to be updated with fields updated as desired
+     *             Note that gameId cannot be updated as that simply selects a different game to update
      */
-    boolean updateStatus(int gameId, boolean inProgress) throws GTNPersistenceException;
+    void updateStatus(Game game) throws GTNPersistenceException;
 }

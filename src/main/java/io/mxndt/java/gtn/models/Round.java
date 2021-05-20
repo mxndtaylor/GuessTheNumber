@@ -1,6 +1,6 @@
 package io.mxndt.java.gtn.models;
 
-import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * @author mxndt
@@ -9,7 +9,7 @@ public class Round {
 
     private int gameId;
     private int guess;
-    private Time timeOfGuess;
+    private Timestamp timeOfGuess;
     private String result;
 
     public int getGameId() {
@@ -28,11 +28,11 @@ public class Round {
         this.guess = guess;
     }
 
-    public Time getTimeOfGuess() {
+    public Timestamp getTimeOfGuess() {
         return timeOfGuess;
     }
 
-    public void setTimeOfGuess(Time timeOfGuess) {
+    public void setTimeOfGuess(Timestamp timeOfGuess) {
         this.timeOfGuess = timeOfGuess;
     }
 

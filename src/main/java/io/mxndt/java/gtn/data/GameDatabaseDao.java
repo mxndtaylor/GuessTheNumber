@@ -9,9 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author mxndt
@@ -28,8 +26,8 @@ public class GameDatabaseDao implements GameDao {
 
     @Override
     public Game add(Game game) throws GTNPersistenceException {
-        final String sql = "INSERT INTO Game(GameInProgress, GameAnswer) "
-                + "VALUES(?,?);";
+        final String sql = "INSERT INTO Game(GameStatus, GameAnswer) "
+                + "VALUES(?, ?);";
         try {
             GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -38,7 +36,7 @@ public class GameDatabaseDao implements GameDao {
                         sql,
                         Statement.RETURN_GENERATED_KEYS);
 
-                statement.setBoolean(1, game.isInProgress());
+                statement.setString(1, game.getStatus());
                 statement.setInt(2, game.getAnswer());
 
                 return statement;
@@ -54,7 +52,7 @@ public class GameDatabaseDao implements GameDao {
 
     @Override
     public List<Game> getAllGames() throws GTNPersistenceException {
-        final String sql = "SELECT Id, GameInProgress, GameAnswer FROM Game;";
+        final String sql = "SELECT Id, GameStatus, GameAnswer FROM Game;";
         try {
             return jdbcTemplate.query(sql, new GameMapper());
         } catch (Throwable t) {
@@ -64,23 +62,18 @@ public class GameDatabaseDao implements GameDao {
 
     @Override
     public Game getGame(int gameId) throws GTNPersistenceException {
-        final String sqlGetGame = "SELECT Id, GameAnswer, GameInProgress "
+        final String sqlGetGame = "SELECT Id, GameAnswer, GameStatus "
                 + "FROM Game WHERE Id = ?;";
         try {
             return jdbcTemplate.queryForObject(sqlGetGame, new GameMapper(), gameId);
         } catch (Throwable t) {
-            System.out.println(gameId);
             throw new GTNPersistenceException("An error occurred while attempting to fetch that game.", t);
         }
     }
 
     @Override
-    public boolean updateStatus(int gameId, boolean inProgress) throws GTNPersistenceException {
-        Game game = getGame(gameId);
-        if (game == null || game.isInProgress() == inProgress) {
-            return false;
-        }
-        final String sql = "UPDATE Game (GameInProgress = ?) WHERE Id = ?";
+    public void updateStatus(Game game) throws GTNPersistenceException {
+        final String sql = "UPDATE Game SET GameStatus = ? WHERE Id = ?;";
 
         try {
             GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -89,16 +82,14 @@ public class GameDatabaseDao implements GameDao {
                         sql,
                         Statement.RETURN_GENERATED_KEYS);
 
-                statement.setBoolean(1, false);
-                statement.setInt(2, gameId);
+                statement.setString(1, game.getStatus());
+                statement.setInt(2, game.getId());
 
                 return statement;
             }, keyHolder);
         } catch (Throwable t) {
             throw new GTNPersistenceException("An error occurred while attempting to update that game.", t);
         }
-
-        return true;
     }
 
     private static final class GameMapper implements RowMapper<Game> {
@@ -108,7 +99,7 @@ public class GameDatabaseDao implements GameDao {
             Game gm = new Game();
             gm.setId(rs.getInt("Id"));
             gm.setAnswer(rs.getInt("GameAnswer"));
-            gm.setInProgress(rs.getBoolean("GameInProgress"));
+            gm.setStatus(rs.getString("GameStatus"));
             return gm;
         }
     }

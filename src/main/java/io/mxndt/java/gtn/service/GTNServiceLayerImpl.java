@@ -7,7 +7,6 @@ import io.mxndt.java.gtn.models.Round;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Time;
 import java.util.*;
 
 /**
@@ -31,10 +30,16 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
     @Override
     public Game createGame() throws
             GTNPersistenceException {
+        //create game and set appropriate fields
         Game game = new Game();
-        game.setInProgress(true);
+        game.setStatus(Game.IN_PROGRESS);
         game.setAnswer(generateNewGameAnswer());
-        return filterAnswer(gameDao.add(game));
+
+        // add game and capture the game as it is represented in the data
+        game = gameDao.add(game);
+
+        // return the game without its answer to be displayed to the user
+        return filterAnswer(game);
     }
 
     @Override
@@ -72,7 +77,7 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
         if (game == null) {
             throw new GTNGameNotFoundException("No game by that id.");
         }
-        if (!game.isInProgress()) {
+        if (game.getStatus().equals(Game.FINISHED)) {
             throw new GTNGameFinishedException("Game no longer accepting answers.");
         }
 
@@ -80,7 +85,7 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
         int guess = round.getGuess();
         if (guess >= 10000) {
             throw new GTNGuessFormatException("Guess must be at most 4 digits."
-                    + "Fills with leading zeroes if less than 4 digits.");
+                    + "Fills with one leading zero if given 3 digits.");
         }
 
         int answer = game.getAnswer();
@@ -94,7 +99,8 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
         round = roundDao.add(round);
 
         if (result.contains("e:4")) {
-            game.setInProgress(false);
+            game.setStatus(Game.FINISHED);
+            gameDao.updateStatus(game);
         }
 
         return round;
@@ -121,12 +127,8 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
      * @return - Game: copy of the game with the answer field unset
      */
     private static Game filterAnswer(Game game) {
-        boolean inProgress = game.isInProgress();
-        int id = game.getId();
-        if (inProgress) {
-            game = new Game();
-            game.setInProgress(inProgress);
-            game.setId(id);
+        if (game.getStatus().equals(Game.IN_PROGRESS)) {
+            game.setAnswer(0);
         }
         return game;
     }
@@ -141,7 +143,7 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
     private static String guessMatchesAnswer(int guess, int answer) throws
             GTNPersistenceException {
         LinkedHashSet<Integer> guessSet = numberToDigits(guess);
-        LinkedHashSet<Integer> answerSet = numberToDigits(guess);
+        LinkedHashSet<Integer> answerSet = numberToDigits(answer);
 
         // find intersect for partial matches (but it includes exact matches too)
         Set<Integer> intersectSet = new HashSet<>(guessSet);
@@ -178,19 +180,24 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
      * @return - int: a 4 digit answer with no repeated digits
      */
     private static int generateNewGameAnswer() {
-        // order is irrelevant, but allowing HashSet to decide order may cause trends
+        // order should be irrelevant, but allowing HashSet to decide order may cause trends
         Set<Integer> answerDigits = new LinkedHashSet<>();
 
+        // guarantees that there are four unique digits
         while (answerDigits.size() < 4) {
             answerDigits.add((int) (Math.random() * 10));
         }
 
+        // stores the unique digits as a single integer in [123, 9876]
+        // 0123 = 123 is considered a 4 digit number for our purposes
         int answer = 0;
+        int[] placeFactors = {1, 10, 100, 1000};
         int i = 0;
         for (int digit : answerDigits) {
-            answer += digit * Math.pow(10, i);
+            answer += (digit * placeFactors[i]);
             i++;
         }
+
         return answer;
     }
 
@@ -202,11 +209,11 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
      */
     private static LinkedHashSet<Integer> numberToDigits(int number) {
         LinkedHashSet<Integer> digits = new LinkedHashSet<>();
-        while (number / 10 > 0) {
+        while (number > 0) {
             digits.add(number % 10);
             number /= 10;
         }
-        if (digits.size() == 3) {
+        if (digits.size() == 3 || digits.isEmpty()) {
             digits.add(0);
         }
         return digits;
