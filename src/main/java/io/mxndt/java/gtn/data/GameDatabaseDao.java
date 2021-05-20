@@ -46,7 +46,7 @@ public class GameDatabaseDao implements GameDao {
 
             game.setId(keyHolder.getKey().intValue());
         } catch (Throwable t) {
-            throw new GTNPersistenceException("An error occurred while attempting to create a game.");
+            throw new GTNPersistenceException("An error occurred while attempting to create a game.", t);
         }
 
         return game;
@@ -54,11 +54,11 @@ public class GameDatabaseDao implements GameDao {
 
     @Override
     public List<Game> getAllGames() throws GTNPersistenceException {
-        final String sql = "SELECT Id, GameInProgress FROM Game";
+        final String sql = "SELECT Id, GameInProgress, GameAnswer FROM Game;";
         try {
             return jdbcTemplate.query(sql, new GameMapper());
         } catch (Throwable t) {
-            throw new GTNPersistenceException("An error occurred while attempting to fetch game list.");
+            throw new GTNPersistenceException("An error occurred while attempting to fetch game list.", t);
         }
     }
 
@@ -69,7 +69,8 @@ public class GameDatabaseDao implements GameDao {
         try {
             return jdbcTemplate.queryForObject(sqlGetGame, new GameMapper(), gameId);
         } catch (Throwable t) {
-            throw new GTNPersistenceException("An error occurred while attempting to fetch that game.");
+            System.out.println(gameId);
+            throw new GTNPersistenceException("An error occurred while attempting to fetch that game.", t);
         }
     }
 
@@ -94,7 +95,7 @@ public class GameDatabaseDao implements GameDao {
                 return statement;
             }, keyHolder);
         } catch (Throwable t) {
-            throw new GTNPersistenceException("An error occurred while attempting to update that game.");
+            throw new GTNPersistenceException("An error occurred while attempting to update that game.", t);
         }
 
         return true;

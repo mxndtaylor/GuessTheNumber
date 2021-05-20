@@ -80,7 +80,7 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
         int guess = round.getGuess();
         if (guess >= 10000) {
             throw new GTNGuessFormatException("Guess must be at most 4 digits."
-                    + "Fills with leading zeroes if less than 4.");
+                    + "Fills with leading zeroes if less than 4 digits.");
         }
 
         int answer = game.getAnswer();
@@ -91,7 +91,6 @@ public class GTNServiceLayerImpl implements GTNServiceLayer {
         String result = guessMatchesAnswer(guess, answer);
 
         round.setResult(result);
-        round.setTimeOfGuess(new Time(System.currentTimeMillis()));
         round = roundDao.add(round);
 
         if (result.contains("e:4")) {

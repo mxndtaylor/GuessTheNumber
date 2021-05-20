@@ -26,9 +26,8 @@ public class RoundDatabaseDao implements RoundDao {
     @Override
     public Round add(Round round) {
         final String sql = "INSERT INTO "
-                + "Round(GuessValue, GuessTime, GuessResult, GameId) "
-                + "VALUES(?,?,?,?)";
-        round.setTimeOfGuess(new Time(System.currentTimeMillis()));
+                + "Round(GuessValue, GuessResult, GameId, GuessTime) "
+                + "VALUES(?, ?, ?, CURRENT_TIMESTAMP)";
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update((Connection conn) -> {
@@ -38,9 +37,8 @@ public class RoundDatabaseDao implements RoundDao {
                     Statement.RETURN_GENERATED_KEYS);
 
             statement.setInt(1, round.getGuess());
-            statement.setTime(2, round.getTimeOfGuess());
-            statement.setString(3, round.getResult());
-            statement.setInt(4, round.getGameId());
+            statement.setString(2, round.getResult());
+            statement.setInt(3, round.getGameId());
             return statement;
 
         }, keyHolder);

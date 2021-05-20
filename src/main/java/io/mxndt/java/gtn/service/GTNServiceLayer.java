@@ -27,7 +27,8 @@ public interface GTNServiceLayer {
      *              the gameId does not match any games
      */
     Game getGame(int gameId) throws
-            GTNGameNotFoundException, GTNPersistenceException;
+            GTNGameNotFoundException,
+            GTNPersistenceException;
 
     /**
      * fetches all games, filtering out answers for unfinished games
@@ -45,7 +46,8 @@ public interface GTNServiceLayer {
     Round guess(Round round) throws
             GTNGameNotFoundException,
             GTNGameFinishedException,
-            GTNGuessFormatException, GTNPersistenceException;
+            GTNGuessFormatException,
+            GTNPersistenceException;
 
     /**
      * Fetches all rounds for a game based on its id
@@ -56,5 +58,7 @@ public interface GTNServiceLayer {
      *              the gameId does not match any games
      */
     List<Round> getGameRounds(int gameId) throws
-            GTNGameNotFoundException, GTNGameFinishedException, GTNPersistenceException;
+            GTNGameNotFoundException,
+            GTNGameFinishedException,
+            GTNPersistenceException;
 }

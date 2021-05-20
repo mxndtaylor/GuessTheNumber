@@ -35,7 +35,7 @@ public class GTNController {
             Game game = service.createGame();
             return new ResponseEntity<>(game, HttpStatus.CREATED);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -52,13 +52,13 @@ public class GTNController {
         try {
             round = service.guess(round);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.NOT_FOUND);
         } catch (GTNGuessFormatException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.BAD_REQUEST);
         } catch (GTNGameFinishedException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.METHOD_NOT_ALLOWED);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok(round);
     }
@@ -68,12 +68,12 @@ public class GTNController {
      *
      * @return - List<Game>: containing all games
      */
-    @GetMapping("game")
+    @GetMapping("/game")
     public ResponseEntity<List<Game>> getAllGames() {
         try {
             return new ResponseEntity<>(service.getGames(), HttpStatus.OK);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,15 +84,15 @@ public class GTNController {
      * @return - ResponseEntity<Game>: ResponseEntity to handle user input,
      *                  Game on valid requests
      */
-    @GetMapping("game/{gameId}")
+    @GetMapping("/game/{gameId}")
     public ResponseEntity<Game> getGame(@PathVariable int gameId) {
         Game game;
         try {
             game = service.getGame(gameId);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.NOT_FOUND);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.ok(game);
     }
@@ -104,17 +104,17 @@ public class GTNController {
      * @return - ReponseEntity<List<Round>>: ResponseEntity to handle user input,
      *                  List<Round> on valid requests
      */
-    @GetMapping("rounds/{gameId}")
+    @GetMapping("/rounds/{gameId}")
     public ResponseEntity<List<Round>> getGameRounds(@PathVariable int gameId) {
         List<Round> result;
         try {
             result = service.getGameRounds(gameId);
         } catch (GTNGameNotFoundException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.NOT_FOUND);
         } catch (GTNPersistenceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (GTNGameFinishedException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+            return new ResponseEntity(e.getMessage() + e.getCause(), HttpStatus.METHOD_NOT_ALLOWED);
         }
         return ResponseEntity.ok(result);
     }
