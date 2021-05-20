@@ -1,6 +1,7 @@
 package io.mxndt.java.gtn.models;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * @author mxndt
@@ -9,7 +10,7 @@ public class Round {
 
     private int gameId;
     private int guess;
-    private Timestamp timeOfGuess;
+    private Timestamp guessTime;
     private String result;
 
     public int getGameId() {
@@ -28,12 +29,12 @@ public class Round {
         this.guess = guess;
     }
 
-    public Timestamp getTimeOfGuess() {
-        return timeOfGuess;
+    public Timestamp getGuessTime() {
+        return guessTime;
     }
 
     public void setTimeOfGuess(Timestamp timeOfGuess) {
-        this.timeOfGuess = timeOfGuess;
+        this.guessTime = timeOfGuess;
     }
 
     public String getResult() {
@@ -42,5 +43,29 @@ public class Round {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 11;
+        hash = 97 * hash + Objects.hashCode(gameId);
+        hash = 97 * hash + Objects.hashCode(guessTime);
+        hash = 97 * hash + Objects.hashCode(result);
+        hash = 97 * hash + Objects.hashCode(guess);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+
+        final Round other = (Round) obj;
+        if (!Objects.equals(gameId, other.gameId)) return false;
+        if (!Objects.equals(guessTime, other.guessTime)) return false;
+        if (!Objects.equals(result, other.result)) return false;
+        if (!Objects.equals(guess, other.guess)) return false;
+        return true;
     }
 }
