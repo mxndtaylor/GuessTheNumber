@@ -29,9 +29,9 @@ public class RoundDatabaseDao implements RoundDao {
     public Round add(Round round) throws GTNPersistenceException {
         final String sql = "INSERT INTO "
                 + "Round(GuessValue, GuessResult, GameId, GuessTime) "
-                + "VALUES(?, ?, ?, CURRENT_TIMESTAMP)";
-        Timestamp ts = Timestamp.from(Instant.now());
-        round.setTimeOfGuess(ts);
+                + "VALUES(?, ?, ?, ?)";
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        round.setGuessTime(ts);
         try {
             GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -44,6 +44,7 @@ public class RoundDatabaseDao implements RoundDao {
                 statement.setInt(1, round.getGuess());
                 statement.setString(2, round.getResult());
                 statement.setInt(3, round.getGameId());
+                statement.setTimestamp(4, round.getGuessTime());
                 return statement;
 
             }, keyHolder);
@@ -68,7 +69,10 @@ public class RoundDatabaseDao implements RoundDao {
 
     @Override
     public void delete(Round round) throws GTNPersistenceException {
-        final String sql = "DELETE FROM round WHERE GameId = ? AND GuessTime = ?";
+        if (!getRounds(round.getGameId()).contains(round)) throw new GTNPersistenceException("Round not found.");
+
+        final String sql = "DELETE FROM round WHERE GameId = ? AND "
+                + "GuessTime = ? AND GuessResult = ? AND GuessValue = ?";
 
         try {
             GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
@@ -81,6 +85,8 @@ public class RoundDatabaseDao implements RoundDao {
 
                 statement.setInt(1, round.getGameId());
                 statement.setTimestamp(2, round.getGuessTime());
+                statement.setString(3, round.getResult());
+                statement.setInt(4, round.getGuess());
                 return statement;
 
             }, keyHolder);
@@ -95,7 +101,7 @@ public class RoundDatabaseDao implements RoundDao {
         public Round mapRow(ResultSet rs, int i) throws SQLException {
             Round rd = new Round();
             rd.setGuess(rs.getInt("GuessValue"));
-            rd.setTimeOfGuess(rs.getTimestamp("GuessTime"));
+            rd.setGuessTime(rs.getTimestamp("GuessTime"));
             rd.setGameId(rs.getInt("GameId"));
             rd.setResult(rs.getString("GuessResult"));
             return rd;

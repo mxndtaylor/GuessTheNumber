@@ -94,6 +94,8 @@ public class GameDatabaseDao implements GameDao {
 
     @Override
     public void delete(Game game) throws GTNPersistenceException {
+        getGame(game.getId());
+
         // Delete all the rounds of the game
         final String sqlDeleteRounds = "DELETE FROM round WHERE GameId = ?;";
         try {

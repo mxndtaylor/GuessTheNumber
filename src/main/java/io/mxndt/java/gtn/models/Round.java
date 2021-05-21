@@ -33,8 +33,8 @@ public class Round {
         return guessTime;
     }
 
-    public void setTimeOfGuess(Timestamp timeOfGuess) {
-        this.guessTime = timeOfGuess;
+    public void setGuessTime(Timestamp guessTime) {
+        this.guessTime = guessTime;
     }
 
     public String getResult() {
